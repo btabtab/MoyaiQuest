@@ -125,6 +125,7 @@ void bulletProcess(KObject* kobj)
 }
 void bulletRenderer(KObject* kobj)
 {
+	#ifndef PLATFORM_WEB
 	static Texture txtr_fl;
 	static bool txtr_ld = false;
 	if(!txtr_ld)
@@ -132,6 +133,9 @@ void bulletRenderer(KObject* kobj)
 		txtr_fl = LoadTexture("rsrcs/particles/basic_shot/basic_shot.png");
 	}
 	DrawBillboard((*getGameData())->camera, txtr_fl, addVectors(ktoBullet(kobj)->physobj.position, RENDER_SCALE_FIX_VECTOR), RENDER_SCALE / 3, RAYWHITE);
+	#else
+	DrawSphere(ktoBullet(kobj)->physobj.position, 2.5f, RED);
+	#endif
 }
 void registerBullet()
 {
@@ -166,6 +170,7 @@ void updatePlayerMovement(GameData* data)
 
 void renderKoboboMoyai(Kobobo* jj)
 {
+	#ifndef PLATFORM_WEB
 	//Up Down Left Right
 	static Texture txtr_fl[4];
 	static bool txtr_ld = false;
@@ -200,6 +205,9 @@ void renderKoboboMoyai(Kobobo* jj)
 	}
 
 	DrawBillboard((*getGameData())->camera, txtr_fl[0], billboard_rendering_pos, RENDER_SCALE, RAYWHITE);
+	#else
+	DrawCylinder((*getGameData())->player->physobj.position, 10, 10, 15, 25, GRAY);
+	#endif
 }
 void renderKoboboMig(Kobobo* jj)
 {
