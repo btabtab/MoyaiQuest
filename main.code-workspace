@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"raylib.h": "c",
+			"math.h": "c",
+			"blocks.h": "c",
+			"stdio.h": "c",
+			"*.m": "c",
+			"physicsobject.h": "c",
+			"dynalloccore.h": "c",
+			"kettlestring.h": "c",
+			"vector3operations.h": "c",
+			"mathmaticaloperations.h": "c",
+			"rotation.h": "c"
+		}
+	}
+}

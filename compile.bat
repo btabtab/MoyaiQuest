@@ -1,0 +1,1 @@
+cls && echo updating Jlib && UpdateJlibFromSource.bat && echo compiling && "C:\LLVM\bin\clang.exe" -g -Wall main.c -o tek.exe
