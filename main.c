@@ -1,4 +1,4 @@
-#include <raylib.h>
+#include <../../../raylib.h>
 
 #include "../MetaLauncher/RaylibHandling.h"
 #include "../MetaLauncher/EngineCode/Saving.h"
@@ -76,6 +76,7 @@ typedef struct GameData
 	Kobobo* player;
 	bool camera_follow_cursor;
 	int cam_look_multiply;
+	bool extra_sway_for_cam;
 
 	bool is_player_moving;
 	Vector2 mouse_offset;
@@ -269,12 +270,6 @@ void controlKeys(GameData* gamedata)
 	{
 		loadData(gamedata, sizeof(GameData), "gmdt.sf");
 	}
-	if(IsKeyPressed(KEY_V))
-	{
-		int cam_mode[2] = {CAMERA_FIRST_PERSON, CAMERA_FREE};
-		gamedata->is_cam_active = !gamedata->is_cam_active;
-		SetCameraMode(gamedata->camera, cam_mode[gamedata->is_cam_active]);
-	}
 	if(IsKeyDown(KEY_Z))
 	{
 		gamedata->camera.fovy = 90.f;
@@ -290,6 +285,10 @@ void controlKeys(GameData* gamedata)
 	{
 		gamedata->camera_follow_cursor = !gamedata->camera_follow_cursor;
 	}
+	if(IsKeyPressed(KEY_V))
+	{
+		gamedata->extra_sway_for_cam = !gamedata->extra_sway_for_cam;
+	}
 	while(IsKeyDown(KEY_H))
 	{
 		KettleString list[] =
@@ -298,7 +297,8 @@ void controlKeys(GameData* gamedata)
 			newKettleString("S : save."),
 			newKettleString("C : toggle camera look."),
 			newKettleString("Z : zoom in."),
-			newKettleString("V : change perspective mode."),
+			// newKettleString("V : change perspective mode."),
+			newKettleString("V : Make camera sway more."),
 			newKettleString("H : help screen.")
 		};
 		BeginDrawing();
@@ -337,6 +337,19 @@ void updateGameCamera(GameData* gamedata)
 													gamedata->cam_look_multiply
 												},
 												gamedata->player->physobj.direction));
+		if(gamedata->extra_sway_for_cam)
+		{
+			gamedata->camera.position.x = gamedata->player->physobj.position.x - (gamedata->player->physobj.direction.x * 1.5f);
+			gamedata->camera.position.y = 150.f;
+			gamedata->camera.position.z = (gamedata->player->physobj.position.z - 80) - (gamedata->player->physobj.direction.z * 1.5f);
+		}
+		else
+		{
+			gamedata->camera.position.x = gamedata->player->physobj.position.x;
+			gamedata->camera.position.y = 150.f;
+			gamedata->camera.position.z = gamedata->player->physobj.position.z - 80;
+		}
+
 	}
 }
 
@@ -436,7 +449,8 @@ void mainLoop(GameData* data)
 			drawRadarToWindow();
 			DrawCircle(SCREENDIM_X / 2, SCREENDIM_Y / 2, 5, (Color){100, 100, 100, 100});
 			DrawCircle(GetMouseX(), GetMouseY(), 5, (Color){100, 255, 100, 255});
-			DrawFPS(0, 0);
+			DrawFPS(0, 30);
+			DrawText("Hold H for keybinds<3.", 0, 0, 30, BLACK);
 		}
 		EndDrawing();
 
@@ -469,6 +483,8 @@ int main()
 	data.cam_look_multiply = 1;
 
 	initRadarTexture();
+
+	mainLoop(&data);
 
 	return 0;
 }
